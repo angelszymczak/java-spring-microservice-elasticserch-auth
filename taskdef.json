@@ -1,0 +1,31 @@
+{
+  "executionRoleArn": "arn:aws:iam::355789170781:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/fargate/service/magneto-app",
+          "awslogs-region": "us-east-2",
+          "awslogs-stream-prefix": "fargate"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 7000,
+          "protocol": "tcp",
+          "containerPort": 7000
+        }
+      ],
+      "image": "355789170781.dkr.ecr.us-east-2.amazonaws.com/magneto-repository:1.0",
+      "name": "magneto-app"
+    }
+  ],
+  "memory": "512",
+  "family": "magneto-app-td",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "cpu": "256"
+}
