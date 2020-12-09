@@ -6,7 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 
 @RestController
 public class GeneticFactorController {
@@ -19,7 +24,7 @@ public class GeneticFactorController {
         MutantFactorDetector detector = new MutantFactorDetector();
         Boolean isMutant = detector.isMutant(factor.getDna());
 
-        LOGGER.info("Factor: %s, isMutant? %s", factor.getDna(), isMutant);
+        LOGGER.info(String.format("Factor: %s, isMutant? %s", Arrays.toString(factor.getDna()), isMutant.toString()));
 
         if (isMutant) return new ResponseEntity(HttpStatus.OK);
         else return new ResponseEntity(HttpStatus.FORBIDDEN);
