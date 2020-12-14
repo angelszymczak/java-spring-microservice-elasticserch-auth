@@ -1,14 +1,24 @@
 package com.magneto.scanner.lib.detector;
 
+
 public class MutantFactorDetector {
     private Monitor monitor;
 
-    public boolean isMutant(String[] data) {
-        String[] flags = {"A", "C", "G", "T"};
-        int humanFactorLimit = 1;
-        int factorSize = 4;
-        this.monitor = new Monitor(factorSize, humanFactorLimit, flags);
+    public MutantFactorDetector() {
+        this.monitor = Monitor.buildMutantMonitor();
+    }
 
+    public MutantFactorDetector(Monitor monitor) {
+        this.monitor = monitor;
+    }
+
+    public static boolean isMutant(String[] data) {
+        MutantFactorDetector detector = new MutantFactorDetector();
+
+        return detector.scan(data);
+    }
+
+    public boolean scan(String[] data) {
         int nSize = data.length;
         for (int i = 0; i < nSize && !this.monitor.hashEnoughFactor(); i++) {
             // Horizontal
@@ -29,7 +39,7 @@ public class MutantFactorDetector {
         return this.monitor.hashEnoughFactor();
     }
 
-    private void scan(String [] data, int prevX, IFactorIndex nextXFunc, int prevY, IFactorIndex nextYFunc) {
+    private void scan(String[] data, int prevX, IFactorIndex nextXFunc, int prevY, IFactorIndex nextYFunc) {
         int nSize = data.length;
 
         if (!isValidIndex(nSize, prevX, prevY)) return;
@@ -44,7 +54,7 @@ public class MutantFactorDetector {
             if (this.monitor.hashEnoughFactor()) break;
 
             String currentFactor = String.valueOf(data[nextY].charAt(nextX));
-            if (currentFactor.equals(prevFactor) && this.monitor.isValidFactor(currentFactor)) {
+            if (currentFactor.equals(prevFactor)) {
                 itemsOccurrences++;
 
                 if (itemsOccurrences == this.monitor.getFactorSize()) this.monitor.recordFactor(currentFactor);

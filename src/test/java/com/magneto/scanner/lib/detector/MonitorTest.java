@@ -1,7 +1,8 @@
 package com.magneto.scanner.lib.detector;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MonitorTest {
     private final String[] factors = { "A", "C", "G", "T" };
@@ -12,14 +13,14 @@ public class MonitorTest {
     public void whenCreateMonitor_ThenGetFactorCountReturnZero() {
         Monitor monitor = new Monitor(factorSize, humanFactorLimit, factors);
 
-        for (String factor: factors) Assertions.assertThat(monitor.getFactorCount(factor)).isZero();
+        for (String factor: factors) assertEquals(0, monitor.getFactorCount(factor));
     }
 
     @Test
     public void whenHashNotEnoughFactor_ThenReturnTrue() {
         Monitor monitor = new Monitor(factorSize, humanFactorLimit, factors);
 
-        Assertions.assertThat(monitor.hashEnoughFactor()).isFalse();
+        assertFalse(monitor.hashEnoughFactor());
     }
 
     @Test
@@ -30,7 +31,7 @@ public class MonitorTest {
         int previousFactorCount = monitor.getFactorCount(factor);
         monitor.recordFactor(factor);
 
-        Assertions.assertThat(monitor.getFactorCount(factor)).isEqualTo(previousFactorCount + 1);
+        assertEquals(monitor.getFactorCount(factor), previousFactorCount + 1);
     }
 
     @Test
@@ -39,6 +40,6 @@ public class MonitorTest {
 
         for (int i = 0; i <= humanFactorLimit; i++) monitor.recordFactor("A");
 
-        Assertions.assertThat(monitor.hashEnoughFactor()).isTrue();
+        assertTrue(monitor.hashEnoughFactor());
     }
 }
