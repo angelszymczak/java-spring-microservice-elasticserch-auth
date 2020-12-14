@@ -20,7 +20,7 @@ public class MutantFactorDetector {
 
     public boolean scan(String[] data) {
         int nSize = data.length;
-        for (int i = 0; i < nSize && !this.monitor.hashEnoughFactor(); i++) {
+        for (int i = 0; i < nSize && !monitor.hashEnoughFactor(); i++) {
             // Horizontal
             scan(data, 0, k -> k + 1, i, k -> k);
 
@@ -36,7 +36,7 @@ public class MutantFactorDetector {
             scan(data, i + 1, x -> x + 1, nSize - 1, y -> y - 1);
         }
 
-        return this.monitor.hashEnoughFactor();
+        return monitor.hashEnoughFactor();
     }
 
     private void scan(String[] data, int prevX, IFactorIndex nextXFunc, int prevY, IFactorIndex nextYFunc) {
@@ -51,13 +51,13 @@ public class MutantFactorDetector {
         int nextY = nextYFunc.next(prevY);
 
         while (isValidIndex(nSize, nextX, nextY) && isFactorReachable(nSize, prevX, prevY, nextX, nextY, itemsOccurrences)) {
-            if (this.monitor.hashEnoughFactor()) break;
+            if (monitor.hashEnoughFactor()) break;
 
             String currentFactor = String.valueOf(data[nextY].charAt(nextX));
             if (currentFactor.equals(prevFactor)) {
                 itemsOccurrences++;
 
-                if (itemsOccurrences == this.monitor.getFactorSize()) this.monitor.recordFactor(currentFactor);
+                monitor.recordFactor(itemsOccurrences, currentFactor);
             } else {
                 itemsOccurrences = 1;
             }
