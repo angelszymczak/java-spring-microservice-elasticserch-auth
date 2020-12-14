@@ -29,17 +29,41 @@ public class MonitorTest {
     public void whenRecordFactor_ThenGetFactorCountReturnIncremented() {
         String factor = "A";
         int previousFactorCount = monitor.accumulatedFactor();
+        int occurrences = factorSize;
 
-        monitor.recordFactor(factor);
+        monitor.recordFactor(occurrences, factor);
 
         assertEquals(previousFactorCount + 1, monitor.accumulatedFactor());
     }
 
     @Test
+    public void whenRecordFactorWithNotReachedSize_ThenGetFactorPreviousFactorCount() {
+        String factor = "A";
+        int previousFactorCount = monitor.accumulatedFactor();
+        int occurrences = factorSize - 1;
+
+        monitor.recordFactor(occurrences, factor);
+
+        assertEquals(previousFactorCount, monitor.accumulatedFactor());
+    }
+
+    @Test
+    public void whenRecordFactorWithIValidFactor_ThenGetFactorPreviousFactorCount() {
+        String factor = "Z";
+        int previousFactorCount = monitor.accumulatedFactor();
+        int occurrences = factorSize;
+
+        monitor.recordFactor(occurrences, factor);
+
+        assertEquals(previousFactorCount, monitor.accumulatedFactor());
+    }
+
+    @Test
     public void whenHashEnoughFactor_ThenReturnTrue() {
         String factor = "A";
+        int occurrences = factorSize;
 
-        for (int i = 0; i <= humanFactorLimit; i++) monitor.recordFactor(factor);
+        for (int i = 0; i <= humanFactorLimit; i++) monitor.recordFactor(occurrences, factor);
 
         assertTrue(monitor.hashEnoughFactor());
     }

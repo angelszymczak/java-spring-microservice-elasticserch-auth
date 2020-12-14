@@ -32,11 +32,10 @@ public class Monitor {
         factorFlags.put(factorFlag, 0);
     }
 
-    public int getFactorCount(String factorFlag) {
-        return factorFlags.get(factorFlag);
-    }
+    public void recordFactor(int occurrences, String flagKey) {
+        if (!factorFlags.containsKey(flagKey)) return;
+        if (occurrences != factorSize) return;
 
-    public void recordFactor(String flagKey) {
         int flagCounter = factorFlags.get(flagKey) + 1;
 
         factorFlags.put(flagKey, flagCounter);
