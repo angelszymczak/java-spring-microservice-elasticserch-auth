@@ -9,6 +9,14 @@ public class Monitor {
     private int humanFactorLimit;
     private int factorSize;
 
+    public static Monitor buildMutantMonitor() {
+        int factorSize = 4;
+        int humanFactorLimit = 1;
+        String[] factors = {"A", "C", "G", "T"};
+
+        return new Monitor(factorSize, humanFactorLimit, factors);
+    }
+
     public Monitor(int factorSize, int humanFactorLimit, String[] factors) {
         this.factorSize = factorSize;
         this.humanFactorLimit = humanFactorLimit;
@@ -38,9 +46,5 @@ public class Monitor {
         int accumulatedFactor = factorFlags.values().stream().reduce(0, Integer::sum);
 
         return accumulatedFactor > humanFactorLimit;
-    }
-
-    public boolean isValidFactor(String factor) {
-        return factorFlags.containsKey(factor);
     }
 }

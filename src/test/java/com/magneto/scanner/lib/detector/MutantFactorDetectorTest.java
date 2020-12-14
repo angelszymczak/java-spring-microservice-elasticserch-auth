@@ -1,22 +1,30 @@
 package com.magneto.scanner.lib.detector;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 public class MutantFactorDetectorTest {
-    private final MutantFactorDetector mutantFactorDetector = new MutantFactorDetector();
+
+    @Test
+    void whenMutantFactoDetectorBuilds() {
+        Monitor monitor = Monitor.buildMutantMonitor();
+
+        new MutantFactorDetector(monitor);
+    }
 
     @Test
     void whenDnaIsNotMutant() {
         String[] dna = {"ATGCGA", "CAGTGC", "TTATTT", "AGACGG", "GCGTCA", "TCACTG"};
 
-        Assertions.assertThat(mutantFactorDetector.isMutant(dna)).isFalse();
+        assertFalse(MutantFactorDetector.isMutant(dna));
     }
 
     @Test
     void whenDnaIsMutant() {
         String[] dna = {"ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"};
 
-        Assertions.assertThat(mutantFactorDetector.isMutant(dna)).isTrue();
+        assertTrue(MutantFactorDetector.isMutant(dna));
     }
 }
