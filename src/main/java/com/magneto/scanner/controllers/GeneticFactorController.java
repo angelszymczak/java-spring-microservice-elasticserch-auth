@@ -1,55 +1,37 @@
 package com.magneto.scanner.controllers;
 
-import com.magneto.scanner.lib.detector.MutantFactorDetector;
 import com.magneto.scanner.models.GeneticFactorDocument;
-import com.magneto.scanner.repository.GeneticFactorRepository;
+import com.magneto.scanner.requests.GeneticFactorParam;
+import com.magneto.scanner.services.GeneticFactorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class GeneticFactorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneticFactorController.class);
 
-    @Resource
-    private GeneticFactorRepository repository;
+    @Autowired
+    public GeneticFactorService service;
+
+    public GeneticFactorController(GeneticFactorService service) {
+        this.service = service;
+    }
 
     @ResponseBody
-    @PostMapping("/mutant")
-    public ResponseEntity create(@RequestBody GeneticFactorDocument factor) {
-        MutantFactorDetector detector = new MutantFactorDetector();
-        Boolean isMutant = detector.isMutant(factor.getDna());
+    @PostMapping(value = "/mutant", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity create(@RequestBody GeneticFactorParam param) {
+        GeneticFactorDocument document = service.findOrCreate(param.getDna());
 
-        LOGGER.info(String.format("Factor: %s, isMutant? %s", Arrays.toString(factor.getDna()), isMutant.toString()));
-
-        if (isMutant) return new ResponseEntity(HttpStatus.OK);
+        if (document.getMutant()) return new ResponseEntity(HttpStatus.OK);
         else return new ResponseEntity(HttpStatus.FORBIDDEN);
-    }
-
-    @PostMapping(value = "/create")
-    public void create2(@RequestBody GeneticFactorDocument factor) {
-        System.out.println("hola");
-
-//        GeneticFactorDocument document = GeneticFactorDocument.builder()
-//                .id(UUID.randomUUID().toString())
-//                .dna(styleNo)
-//                .info("style is created with no " + styleNo)
-//                .validTo(new Date())
-//                .build();
-
-        repository.save(factor);
-    }
-
-    @PostMapping(value = "/find")
-    public List<GeneticFactorDocument> find(@RequestBody GeneticFactorDocument factor) {
-        List<GeneticFactorDocument> res = repository.findByDna(factor.getDna());
-        return res;
     }
 }
