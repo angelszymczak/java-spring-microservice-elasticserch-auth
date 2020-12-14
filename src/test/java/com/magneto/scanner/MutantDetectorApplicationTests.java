@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class MutantDetectorApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void main() {
+		MutantDetectorApplication.main(new String[] {});
 	}
-
 }
