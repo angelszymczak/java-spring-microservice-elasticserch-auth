@@ -43,8 +43,10 @@ public class Monitor {
     }
 
     public boolean hashEnoughFactor() {
-        int accumulatedFactor = factorFlags.values().stream().reduce(0, Integer::sum);
+        return accumulatedFactor() > humanFactorLimit;
+    }
 
-        return accumulatedFactor > humanFactorLimit;
+    public int accumulatedFactor() {
+        return factorFlags.values().stream().reduce(0, Integer::sum);
     }
 }

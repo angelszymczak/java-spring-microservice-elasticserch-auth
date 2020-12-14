@@ -1,5 +1,6 @@
 package com.magneto.scanner.lib.detector;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,36 +10,36 @@ public class MonitorTest {
     private final int humanFactorLimit = 1;
     private final int factorSize = 4;
 
-    @Test
-    public void whenCreateMonitor_ThenGetFactorCountReturnZero() {
-        Monitor monitor = new Monitor(factorSize, humanFactorLimit, factors);
+    private Monitor monitor;
 
-        for (String factor: factors) assertEquals(0, monitor.getFactorCount(factor));
+    @BeforeEach
+    public void setUp() {
+        monitor = new Monitor(factorSize, humanFactorLimit, factors);
     }
 
     @Test
-    public void whenHashNotEnoughFactor_ThenReturnTrue() {
-        Monitor monitor = new Monitor(factorSize, humanFactorLimit, factors);
-
-        assertFalse(monitor.hashEnoughFactor());
+    public void whenCreateMonitor_ThenGetNotHashEnoughFactorAndCountReturnZero() {
+        assertAll("monitor",
+                () -> assertEquals(0, monitor.accumulatedFactor()),
+                () -> assertFalse(monitor.hashEnoughFactor())
+        );
     }
 
     @Test
     public void whenRecordFactor_ThenGetFactorCountReturnIncremented() {
-        Monitor monitor = new Monitor(factorSize, humanFactorLimit, factors);
-
         String factor = "A";
-        int previousFactorCount = monitor.getFactorCount(factor);
+        int previousFactorCount = monitor.accumulatedFactor();
+
         monitor.recordFactor(factor);
 
-        assertEquals(monitor.getFactorCount(factor), previousFactorCount + 1);
+        assertEquals(previousFactorCount + 1, monitor.accumulatedFactor());
     }
 
     @Test
     public void whenHashEnoughFactor_ThenReturnTrue() {
-        Monitor monitor = new Monitor(factorSize, humanFactorLimit, factors);
+        String factor = "A";
 
-        for (int i = 0; i <= humanFactorLimit; i++) monitor.recordFactor("A");
+        for (int i = 0; i <= humanFactorLimit; i++) monitor.recordFactor(factor);
 
         assertTrue(monitor.hashEnoughFactor());
     }
