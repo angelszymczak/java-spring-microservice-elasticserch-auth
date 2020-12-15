@@ -2,6 +2,7 @@ package com.magneto.scanner.controllers.v1;
 
 import com.magneto.scanner.models.GeneticFactorDocument;
 import com.magneto.scanner.requests.GeneticFactorParam;
+import com.magneto.scanner.response.GeneticFactorStatResponse;
 import com.magneto.scanner.services.GeneticFactorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,22 @@ public class GeneticFactorController {
 
     @ResponseBody
     @PostMapping(value = "/mutant", consumes = "application/vnd.magneto.v1+json")
-    public ResponseEntity create(@RequestBody GeneticFactorParam param) {
+    public ResponseEntity mutant(@RequestBody GeneticFactorParam param) {
         GeneticFactorDocument document = service.findOrCreate(param.getDna());
 
-        if (document.getMutant()) return new ResponseEntity(HttpStatus.OK);
-        else return new ResponseEntity(HttpStatus.FORBIDDEN);
+        if (document.getMutant()) return ResponseEntity.status(HttpStatus.OK).build();
+        else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @ResponseBody
+    @PostMapping(value = "/stats", produces = "application/vnd.magneto.v1+json")
+    public ResponseEntity<GeneticFactorStatResponse> stats() {
+        int humansCount = service.findByMutant(false).size();
+        int mutantsCount = service.findByMutant(true).size();
+        double ratio = (double) mutantsCount / (double) humansCount;
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new GeneticFactorStatResponse(mutantsCount, humansCount, ratio));
     }
 }

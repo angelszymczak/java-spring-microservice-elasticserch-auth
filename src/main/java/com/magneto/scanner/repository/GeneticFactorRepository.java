@@ -16,4 +16,5 @@ import java.util.List;
  */
 public interface GeneticFactorRepository extends ElasticsearchRepository<GeneticFactorDocument, String> {
     List<GeneticFactorDocument> findByDna(String dna);
+    List<GeneticFactorDocument> findByMutant(Boolean isMutant);
 }

@@ -1,6 +1,9 @@
 package com.magneto.scanner.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 
@@ -24,10 +27,12 @@ public class GeneticFactorDocument {
 
     @Override
     public String toString() {
-        return String.format(
-                "GeneticFactorDocument: { id: %s, dna: %s, mutant: %s, timestamp: %s }",
-                id, dna, mutant, timestamp
-        );
+        return new ToStringBuilder(this)
+                .append("id", getId())
+                .append("dna", getDna())
+                .append("mutant", getMutant())
+                .append("timestamp", getTimestamp())
+                .build();
     }
 }
 

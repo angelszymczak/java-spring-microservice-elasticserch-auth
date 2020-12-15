@@ -28,6 +28,10 @@ public class GeneticFactorService {
         return (document.isPresent()) ? document.get() : create(dna);
     }
 
+    public List<GeneticFactorDocument> findByMutant(Boolean isMutant) {
+        return repository.findByMutant(isMutant);
+    }
+
     private Optional<GeneticFactorDocument> findByDna(String[] dna) {
         String joinedDna = String.join(DELIMITER, dna);
         List<GeneticFactorDocument> documents = repository.findByDna(joinedDna);
