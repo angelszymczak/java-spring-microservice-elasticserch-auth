@@ -1,0 +1,42 @@
+openapi: 3.0.1
+info:
+  title: Mutant-Detector Microservice
+  description: Java Demo Microservices for Magneto Project
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Angel - Software Engineer
+    email: juanangelszymczak@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://springdoc.org
+  version: "1.0"
+servers:
+- url: http://localhost:9901
+  description: Generated server url
+paths:
+  /mutant:
+    post:
+      tags:
+      - genetic-factor-controller
+      operationId: create
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeneticFactorParam'
+      responses:
+        "200":
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+components:
+  schemas:
+    GeneticFactorParam:
+      type: object
+      properties:
+        dna:
+          type: array
+          items:
+            type: string
