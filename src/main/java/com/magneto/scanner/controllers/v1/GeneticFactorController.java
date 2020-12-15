@@ -1,8 +1,8 @@
 package com.magneto.scanner.controllers.v1;
 
 import com.magneto.scanner.models.GeneticFactorDocument;
+import com.magneto.scanner.models.GeneticFactorStat;
 import com.magneto.scanner.requests.GeneticFactorParam;
-import com.magneto.scanner.response.GeneticFactorStatResponse;
 import com.magneto.scanner.services.GeneticFactorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,13 +35,11 @@ public class GeneticFactorController {
 
     @ResponseBody
     @PostMapping(value = "/stats", produces = "application/vnd.magneto.v1+json")
-    public ResponseEntity<GeneticFactorStatResponse> stats() {
-        int humansCount = service.findByMutant(false).size();
-        int mutantsCount = service.findByMutant(true).size();
-        double ratio = (double) mutantsCount / (double) humansCount;
+    public ResponseEntity<GeneticFactorStat> stats() {
+        GeneticFactorStat factorStat = service.getStat();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new GeneticFactorStatResponse(mutantsCount, humansCount, ratio));
+                .body(factorStat);
     }
 }

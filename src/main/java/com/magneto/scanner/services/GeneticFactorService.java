@@ -2,6 +2,7 @@ package com.magneto.scanner.services;
 
 import com.magneto.scanner.lib.detector.MutantFactorDetector;
 import com.magneto.scanner.models.GeneticFactorDocument;
+import com.magneto.scanner.models.GeneticFactorStat;
 import com.magneto.scanner.repository.GeneticFactorRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +29,12 @@ public class GeneticFactorService {
         return (document.isPresent()) ? document.get() : create(dna);
     }
 
-    public List<GeneticFactorDocument> findByMutant(Boolean isMutant) {
-        return repository.findByMutant(isMutant);
+    public GeneticFactorStat getStat() {
+        int humansCount = repository.findByMutant(false).size();
+        int mutantsCount = repository.findByMutant(true).size();
+        double ratio = (double) mutantsCount / (double) humansCount;
+
+        return new GeneticFactorStat(mutantsCount, humansCount, ratio);
     }
 
     private Optional<GeneticFactorDocument> findByDna(String[] dna) {

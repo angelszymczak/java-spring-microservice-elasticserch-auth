@@ -2,8 +2,8 @@ package com.magneto.scanner.contollers.v1;
 
 import com.magneto.scanner.controllers.v1.GeneticFactorController;
 import com.magneto.scanner.models.GeneticFactorDocument;
+import com.magneto.scanner.models.GeneticFactorStat;
 import com.magneto.scanner.requests.GeneticFactorParam;
-import com.magneto.scanner.response.GeneticFactorStatResponse;
 import com.magneto.scanner.services.GeneticFactorService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,15 +62,10 @@ public class GeneticFactorDocumentControllerTest {
         int humansCount = 100;
         double ratio = 0.4;
 
-        List<GeneticFactorDocument> mutants = new ArrayList<>();
-        for (int i = 0; i < mutantsCount; i++) mutants.add(GeneticFactorDocument.builder().mutant(true).build());
-        when(mockedService.findByMutant(true)).thenReturn(mutants);
+        GeneticFactorStat stat = new GeneticFactorStat(mutantsCount, humansCount, ratio);
+        when(mockedService.getStat()).thenReturn(stat);
 
-        List<GeneticFactorDocument> humans = new ArrayList<>();
-        for (int i = 0; i < humansCount; i++) humans.add(GeneticFactorDocument.builder().mutant(false).build());
-        when(mockedService.findByMutant(false)).thenReturn(humans);
-
-        ResponseEntity<GeneticFactorStatResponse> response = controller.stats();
+        ResponseEntity<GeneticFactorStat> response = controller.stats();
 
         assertAll("Genetic Code status",
                 () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
