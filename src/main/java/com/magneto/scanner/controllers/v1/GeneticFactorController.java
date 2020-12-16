@@ -1,7 +1,6 @@
 package com.magneto.scanner.controllers.v1;
 
 import com.magneto.scanner.models.GeneticFactorDocument;
-import com.magneto.scanner.models.GeneticFactorStat;
 import com.magneto.scanner.requests.GeneticFactorParam;
 import com.magneto.scanner.services.GeneticFactorService;
 import org.slf4j.Logger;
@@ -31,15 +30,5 @@ public class GeneticFactorController {
 
         if (document.getMutant()) return ResponseEntity.status(HttpStatus.OK).build();
         else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-    }
-
-    @ResponseBody
-    @PostMapping(value = "/stats", produces = "application/vnd.magneto.v1+json")
-    public ResponseEntity<GeneticFactorStat> stats() {
-        GeneticFactorStat factorStat = service.getStat();
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(factorStat);
     }
 }
