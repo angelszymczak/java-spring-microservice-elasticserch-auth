@@ -33,11 +33,6 @@ class GeneticFactorDocumentTest {
     void whenToString() {
         GeneticFactorDocument document = new GeneticFactorDocument(id, dna, isMutant, timestamp);
 
-        assertTrue(
-                document.toString().contains(String.format(
-                        "[id=%s,dna=%s,mutant=%s,timestamp=%s]",
-                        id, dna, isMutant, timestamp
-                ))
-        );
+        assertTrue(document.toString().contains(String.format("[id=%s,dna=%s,mutant=%s,timestamp=%s]", id, dna, isMutant, timestamp)));
     }
 }

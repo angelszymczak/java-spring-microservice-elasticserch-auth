@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,21 +22,21 @@ class StatServiceTest {
     @Autowired
     StatService service = new StatService(mockedGeneticFactorRepository, mockedStatRepository);
 
-    final GeneticFactorDocument mutantDocument = GeneticFactorDocument.builder()
-            .mutant(true)
-            .build();
+    int mutantCount = 2;
+    int humanCount = 5;
+    double ratio = 0.4;
 
-    final GeneticFactorDocument humanDocument = GeneticFactorDocument.builder()
-            .mutant(false)
-            .build();
+    private void mockGeneticFactorRepository(int count, boolean mutant) {
+        GeneticFactorDocument document = GeneticFactorDocument.builder().mutant(mutant).build();
 
+        List<GeneticFactorDocument> documents = new ArrayList<>();
+        for (int i = 0; i < count; i++) documents.add(document);
+
+        when(mockedGeneticFactorRepository.findByMutant(mutant)).thenReturn(documents);
+    }
 
     @Test
     void getStatIsPresent_ThenReturnOldStat() {
-        int mutantCount = 40;
-        int humanCount = 100;
-        double ratio = 0.4;
-
         when(mockedStatRepository.getStat()).thenReturn(new Stat(mutantCount, humanCount, ratio));
 
         Stat response = service.getStat();
@@ -53,39 +52,69 @@ class StatServiceTest {
     void getStatNotPresent_ThenReturnNewStat() {
         when(mockedStatRepository.getStat()).thenReturn(null);
 
-        when(mockedGeneticFactorRepository.findByMutant(true))
-                .thenReturn(Arrays.asList(new GeneticFactorDocument[]{mutantDocument, mutantDocument}));
-        when(mockedGeneticFactorRepository.findByMutant(false))
-                .thenReturn(Arrays.asList(new GeneticFactorDocument[]{humanDocument, humanDocument, humanDocument, humanDocument, humanDocument}));
+        mockGeneticFactorRepository(mutantCount, true);
+        mockGeneticFactorRepository(humanCount, false);
 
         Stat response = service.getStat();
 
         assertAll("stat",
-                () -> assertEquals(2, response.getCount_mutant_dna()),
-                () -> assertEquals(5, response.getCount_human_dna()),
-                () -> assertEquals(0.4, response.getRatio())
+                () -> assertEquals(mutantCount, response.getCount_mutant_dna()),
+                () -> assertEquals(humanCount, response.getCount_human_dna()),
+                () -> assertEquals(ratio, response.getRatio())
         );
     }
 
     @Test
     void recordMutantWithNonCountZero_ThenRatioIncremented() {
-        List<GeneticFactorDocument> mutants = new ArrayList<>();
-        int mutantCount = 40;
-        for (int i = 0; i < mutantCount; i++) mutants.add(mutantDocument);
-        when(mockedGeneticFactorRepository.findByMutant(true)).thenReturn(mutants);
+        mockGeneticFactorRepository(mutantCount, true);
+        mockGeneticFactorRepository(humanCount, false);
 
-        List<GeneticFactorDocument> humans = new ArrayList<>();
-        int humanCount = 100;
-        for (int i = 0; i < humanCount; i++) humans.add(humanDocument);
-        when(mockedGeneticFactorRepository.findByMutant(false)).thenReturn(humans);
+        Stat response = service.record(true);
 
-        double ratio = 0.4;
-
-        Stat mutantResponse = service.record(true);
         assertAll("Stats",
-                () -> assertEquals(mutantCount + 1, mutantResponse.getCount_mutant_dna()),
-                () -> assertEquals(humanCount, mutantResponse.getCount_human_dna()),
-                () -> assertTrue(ratio < mutantResponse.getRatio())
+                () -> assertEquals(mutantCount + 1, response.getCount_mutant_dna()),
+                () -> assertEquals(humanCount, response.getCount_human_dna()),
+                () -> assertTrue(ratio < response.getRatio())
+        );
+    }
+
+    @Test
+    void recordMutantWithHumanCountZero_ThenRatioIsZero() {
+        mockGeneticFactorRepository(mutantCount, true);
+
+        Stat response = service.record(true);
+
+        assertAll("Stats",
+                () -> assertEquals(mutantCount + 1, response.getCount_mutant_dna()),
+                () -> assertEquals(0, response.getCount_human_dna()),
+                () -> assertEquals(0, response.getRatio())
+        );
+    }
+
+    @Test
+    void recordHumanWithNonCountZero_ThenRatioIncremented() {
+        mockGeneticFactorRepository(mutantCount, true);
+        mockGeneticFactorRepository(humanCount, false);
+
+        Stat response = service.record(false);
+
+        assertAll("Stats",
+                () -> assertEquals(mutantCount, response.getCount_mutant_dna()),
+                () -> assertEquals(humanCount + 1, response.getCount_human_dna()),
+                () -> assertTrue(ratio > response.getRatio())
+        );
+    }
+
+    @Test
+    void recordHumanWithMutantCountZero_ThenRatioIsZero() {
+        mockGeneticFactorRepository(humanCount, false);
+
+        Stat response = service.record(false);
+
+        assertAll("Stats",
+                () -> assertEquals(0, response.getCount_mutant_dna()),
+                () -> assertEquals(humanCount + 1, response.getCount_human_dna()),
+                () -> assertEquals(0, response.getRatio())
         );
     }
 }

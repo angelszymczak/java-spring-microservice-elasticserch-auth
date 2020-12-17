@@ -32,6 +32,7 @@ public class StatService {
         } else {
             int mutantCount = geneticFactorRepository.findByMutant(true).size();
             int humanCount = geneticFactorRepository.findByMutant(false).size();
+
             double ratio;
             if (mutantCount == 0 || humanCount == 0) ratio = 0;
             else ratio = Precision.round((double) mutantCount / (double) humanCount, 2);
