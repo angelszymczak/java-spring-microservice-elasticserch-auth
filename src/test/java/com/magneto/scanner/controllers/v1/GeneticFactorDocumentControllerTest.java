@@ -1,6 +1,5 @@
-package com.magneto.scanner.contollers.v1;
+package com.magneto.scanner.controllers.v1;
 
-import com.magneto.scanner.controllers.v1.GeneticFactorController;
 import com.magneto.scanner.models.GeneticFactorDocument;
 import com.magneto.scanner.requests.GeneticFactorParam;
 import com.magneto.scanner.services.GeneticFactorService;
