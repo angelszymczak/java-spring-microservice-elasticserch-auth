@@ -1,6 +1,6 @@
 package com.magneto.scanner.repository;
 
-import com.magneto.scanner.models.GeneticFactorDocument;
+import com.magneto.scanner.models.GeneticFactor;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  *  over specific combination, but if we would scanner a new pattern probably
  *  you'll parse it splitting by quotes "," since It to get dimensions of genetic code.
  */
-public interface GeneticFactorRepository extends ElasticsearchRepository<GeneticFactorDocument, String> {
-    List<GeneticFactorDocument> findByDna(String dna);
-    List<GeneticFactorDocument> findByMutant(Boolean isMutant);
+public interface GeneticFactorRepository extends ElasticsearchRepository<GeneticFactor, String> {
+    List<GeneticFactor> findByDna(String dna);
+    List<GeneticFactor> findByMutant(Boolean isMutant);
 }

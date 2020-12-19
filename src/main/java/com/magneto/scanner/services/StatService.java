@@ -61,7 +61,7 @@ public class StatService {
             stat.setCount_human_dna(humanCount);
         }
 
-        if (humanCount == 0 || humanCount == 0) stat.setRatio(0);
+        if (mutantCount == 0 || humanCount == 0) stat.setRatio(0);
         else stat.setRatio(Precision.round((double) mutantCount / (double) humanCount, 2));
 
         statRepository.save(stat);

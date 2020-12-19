@@ -3,7 +3,6 @@ package com.magneto.scanner.controllers.v1;
 import com.magneto.scanner.models.Stat;
 import com.magneto.scanner.services.StatService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,9 +14,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class StatsControllerTest {
-    StatService mockedService = mock(StatService.class);
 
-    @Autowired
+    StatService mockedService = mock(StatService.class);
     StatsController controller = new StatsController(mockedService);
 
     @Test

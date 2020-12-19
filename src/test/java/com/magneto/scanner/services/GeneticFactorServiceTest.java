@@ -1,6 +1,6 @@
 package com.magneto.scanner.services;
 
-import com.magneto.scanner.models.GeneticFactorDocument;
+import com.magneto.scanner.models.GeneticFactor;
 import com.magneto.scanner.repository.GeneticFactorRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,44 +15,44 @@ import static org.mockito.Mockito.when;
 
 class GeneticFactorServiceTest {
     GeneticFactorRepository mockedRepository = mock(GeneticFactorRepository.class);
-    StatService statService = mock(StatService.class);
+    StatService mockedStatService = mock(StatService.class);
 
     @Autowired
-    GeneticFactorService service = new GeneticFactorService(mockedRepository, statService);
+    GeneticFactorService geneticFactorService = new GeneticFactorService(mockedRepository, mockedStatService);
 
     final String[] presentMutantDna = {"ATGCGA", "CAGTGC", "TTATTT", "AGACGG", "GCGTCA", "TCACTG"};
     final String presentDnaRepository = String.join(GeneticFactorService.DELIMITER, presentMutantDna);
-    final GeneticFactorDocument presentDocument = GeneticFactorDocument.builder()
+    final GeneticFactor presentGeneticFactor = GeneticFactor.builder()
             .dna(presentDnaRepository)
             .mutant(true)
             .build();
 
     final String[] notPresentHumanDna = {"ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"};
     final String newDnaRepository = String.join(GeneticFactorService.DELIMITER, notPresentHumanDna);
-    final GeneticFactorDocument newDocument = GeneticFactorDocument.builder()
+    final GeneticFactor newGeneticFactor = GeneticFactor.builder()
             .dna(newDnaRepository)
             .mutant(false)
             .build();
 
     @Test
-    void whenFindOrCreateWithPresentDna_ThenReturnPresentDocument() {
+    void whenFindOrCreateWithPresentDna_ThenReturnPresentGeneticFactor() {
         when(mockedRepository.findByDna(presentDnaRepository))
-                .thenReturn(Arrays.asList(new GeneticFactorDocument[]{presentDocument}));
+                .thenReturn(Arrays.asList(new GeneticFactor[]{presentGeneticFactor}));
 
-        GeneticFactorDocument response = service.findOrCreate(presentMutantDna);
+        GeneticFactor response = geneticFactorService.findOrCreate(presentMutantDna);
 
         assertThat(presentDnaRepository).isEqualTo(response.getDna());
     }
 
     @Test
-    void whenFindOrCreateWithNotPresentDna_ThenReturnNewDocument() {
+    void whenFindOrCreateWithNotPresentDna_ThenReturnNewGeneticFactor() {
         when(mockedRepository.findByDna(newDnaRepository))
                 .thenReturn(Collections.emptyList());
 
         when(mockedRepository.save(any()))
-                .thenReturn(newDocument);
+                .thenReturn(newGeneticFactor);
 
-        GeneticFactorDocument response = service.findOrCreate(notPresentHumanDna);
+        GeneticFactor response = geneticFactorService.findOrCreate(notPresentHumanDna);
 
         assertThat(newDnaRepository).isEqualTo(response.getDna());
     }

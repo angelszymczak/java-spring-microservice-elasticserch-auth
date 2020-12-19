@@ -1,7 +1,7 @@
 package com.magneto.scanner.services;
 
 import com.magneto.scanner.lib.detector.MutantFactorDetector;
-import com.magneto.scanner.models.GeneticFactorDocument;
+import com.magneto.scanner.models.GeneticFactor;
 import com.magneto.scanner.repository.GeneticFactorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,30 +27,30 @@ public class GeneticFactorService {
         this.statService = statService;
     }
 
-    public GeneticFactorDocument findOrCreate(String[] dna) {
-        Optional<GeneticFactorDocument> document = findByDna(dna);
+    public GeneticFactor findOrCreate(String[] dna) {
+        Optional<GeneticFactor> geneticFactor = findByDna(dna);
 
-        return (document.isPresent()) ? document.get() : create(dna);
+        return (geneticFactor.isPresent()) ? geneticFactor.get() : create(dna);
     }
 
-    private Optional<GeneticFactorDocument> findByDna(String[] dna) {
+    private Optional<GeneticFactor> findByDna(String[] dna) {
         String joinedDna = String.join(DELIMITER, dna);
-        List<GeneticFactorDocument> documents = repository.findByDna(joinedDna);
+        List<GeneticFactor> geneticFactors = repository.findByDna(joinedDna);
 
-        Boolean anyDocument = documents.stream().anyMatch(doc -> doc.getDna().equals(joinedDna));
-        return (anyDocument) ? documents.stream().findFirst() : Optional.ofNullable(null);
+        Boolean anyGeneticFactor = geneticFactors.stream().anyMatch(doc -> doc.getDna().equals(joinedDna));
+        return (anyGeneticFactor) ? geneticFactors.stream().findFirst() : Optional.ofNullable(null);
     }
 
-    private GeneticFactorDocument create(String[] dna) {
-        GeneticFactorDocument document = repository.save(GeneticFactorDocument.builder()
+    private GeneticFactor create(String[] dna) {
+        GeneticFactor geneticFactor = repository.save(GeneticFactor.builder()
                 .id(UUID.randomUUID().toString())
                 .dna(String.join(DELIMITER, dna))
                 .mutant(MutantFactorDetector.isMutant(dna))
                 .timestamp(Instant.now().toEpochMilli())
                 .build());
 
-        statService.record(document.getMutant());
+        statService.record(geneticFactor.getMutant());
 
-        return document;
+        return geneticFactor;
     }
 }
