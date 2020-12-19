@@ -1,11 +1,9 @@
-package com.magneto.scanner.contollers.v1;
+package com.magneto.scanner.controllers.v1;
 
-import com.magneto.scanner.controllers.v1.GeneticFactorController;
-import com.magneto.scanner.models.GeneticFactorDocument;
-import com.magneto.scanner.requests.GeneticFactorParam;
+import com.magneto.scanner.models.GeneticFactor;
+import com.magneto.scanner.payload.request.ScanRequest;
 import com.magneto.scanner.services.GeneticFactorService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -13,26 +11,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GeneticFactorDocumentControllerTest {
-    GeneticFactorService mockedService = mock(GeneticFactorService.class);
-
-    @Autowired
-    GeneticFactorController controller = new GeneticFactorController(mockedService);
+public class GeneticFactorControllerTest {
 
     final String[] mutantDnaParam = {"ATGCGA", "CAGTGC", "TTATTT", "AGACGG", "GCGTCA", "TCACTG"};
     final String[] humanDnaParam = {"ATGCGA", "CAGTGC", "TTATGT", "AGAAGG", "CCCCTA", "TCACTG"};
+
+    private GeneticFactorService mockedService = mock(GeneticFactorService.class);
+    private GeneticFactorController controller = new GeneticFactorController(mockedService);
 
     @Test
     void whenPostDnaIsNotMutant_ThenReturn403() {
         when(mockedService.findOrCreate(humanDnaParam))
                 .thenReturn(
-                        GeneticFactorDocument.builder()
+                        GeneticFactor.builder()
                                 .dna(String.join(GeneticFactorService.DELIMITER, humanDnaParam))
                                 .mutant(false)
                                 .build()
                 );
 
-        ResponseEntity response = controller.mutant(new GeneticFactorParam(humanDnaParam));
+        ResponseEntity response = controller.mutant(new ScanRequest(humanDnaParam));
 
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
     }
@@ -41,13 +38,13 @@ public class GeneticFactorDocumentControllerTest {
     void whenPostDnaIsMutant_ThenReturn200() {
         when(mockedService.findOrCreate(mutantDnaParam))
                 .thenReturn(
-                        GeneticFactorDocument.builder()
+                        GeneticFactor.builder()
                                 .dna(String.join(GeneticFactorService.DELIMITER, mutantDnaParam))
                                 .mutant(true)
                                 .build()
                 );
 
-        ResponseEntity response = controller.mutant(new GeneticFactorParam(mutantDnaParam));
+        ResponseEntity response = controller.mutant(new ScanRequest(mutantDnaParam));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }

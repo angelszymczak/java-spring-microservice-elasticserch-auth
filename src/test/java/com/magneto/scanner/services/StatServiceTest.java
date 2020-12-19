@@ -1,6 +1,6 @@
 package com.magneto.scanner.services;
 
-import com.magneto.scanner.models.GeneticFactorDocument;
+import com.magneto.scanner.models.GeneticFactor;
 import com.magneto.scanner.models.Stat;
 import com.magneto.scanner.repository.GeneticFactorRepository;
 import com.magneto.scanner.repository.StatRepository;
@@ -20,26 +20,26 @@ class StatServiceTest {
     StatRepository mockedStatRepository = mock(StatRepository.class);
 
     @Autowired
-    StatService service = new StatService(mockedGeneticFactorRepository, mockedStatRepository);
+    StatService statService = new StatService(mockedGeneticFactorRepository, mockedStatRepository);
 
     int mutantCount = 2;
     int humanCount = 5;
     double ratio = 0.4;
 
     private void mockGeneticFactorRepository(int count, boolean mutant) {
-        GeneticFactorDocument document = GeneticFactorDocument.builder().mutant(mutant).build();
+        GeneticFactor geneticFactor = GeneticFactor.builder().mutant(mutant).build();
 
-        List<GeneticFactorDocument> documents = new ArrayList<>();
-        for (int i = 0; i < count; i++) documents.add(document);
+        List<GeneticFactor> geneticFactors = new ArrayList<>();
+        for (int i = 0; i < count; i++) geneticFactors.add(geneticFactor);
 
-        when(mockedGeneticFactorRepository.findByMutant(mutant)).thenReturn(documents);
+        when(mockedGeneticFactorRepository.findByMutant(mutant)).thenReturn(geneticFactors);
     }
 
     @Test
     void getStatIsPresent_ThenReturnOldStat() {
         when(mockedStatRepository.getStat()).thenReturn(new Stat(mutantCount, humanCount, ratio));
 
-        Stat response = service.getStat();
+        Stat response = statService.getStat();
 
         assertAll("stat",
                 () -> assertEquals(mutantCount, response.getCount_mutant_dna()),
@@ -55,7 +55,7 @@ class StatServiceTest {
         mockGeneticFactorRepository(mutantCount, true);
         mockGeneticFactorRepository(humanCount, false);
 
-        Stat response = service.getStat();
+        Stat response = statService.getStat();
 
         assertAll("stat",
                 () -> assertEquals(mutantCount, response.getCount_mutant_dna()),
@@ -69,7 +69,7 @@ class StatServiceTest {
         mockGeneticFactorRepository(mutantCount, true);
         mockGeneticFactorRepository(humanCount, false);
 
-        Stat response = service.record(true);
+        Stat response = statService.record(true);
 
         assertAll("Stats",
                 () -> assertEquals(mutantCount + 1, response.getCount_mutant_dna()),
@@ -82,7 +82,7 @@ class StatServiceTest {
     void recordMutantWithHumanCountZero_ThenRatioIsZero() {
         mockGeneticFactorRepository(mutantCount, true);
 
-        Stat response = service.record(true);
+        Stat response = statService.record(true);
 
         assertAll("Stats",
                 () -> assertEquals(mutantCount + 1, response.getCount_mutant_dna()),
@@ -96,7 +96,7 @@ class StatServiceTest {
         mockGeneticFactorRepository(mutantCount, true);
         mockGeneticFactorRepository(humanCount, false);
 
-        Stat response = service.record(false);
+        Stat response = statService.record(false);
 
         assertAll("Stats",
                 () -> assertEquals(mutantCount, response.getCount_mutant_dna()),
@@ -109,7 +109,7 @@ class StatServiceTest {
     void recordHumanWithMutantCountZero_ThenRatioIsZero() {
         mockGeneticFactorRepository(humanCount, false);
 
-        Stat response = service.record(false);
+        Stat response = statService.record(false);
 
         assertAll("Stats",
                 () -> assertEquals(0, response.getCount_mutant_dna()),

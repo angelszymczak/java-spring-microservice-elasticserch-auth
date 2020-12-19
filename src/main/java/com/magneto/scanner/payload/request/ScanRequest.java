@@ -1,4 +1,4 @@
-package com.magneto.scanner.requests;
+package com.magneto.scanner.payload.request;
 
 import lombok.*;
 
@@ -6,6 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class GeneticFactorParam {
+@ToString
+public class ScanRequest {
     private String[] dna;
 }
