@@ -4,6 +4,8 @@ import com.magneto.scanner.models.Stat;
 import com.magneto.scanner.repository.GeneticFactorRepository;
 import com.magneto.scanner.repository.StatRepository;
 import org.apache.commons.math3.util.Precision;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -12,6 +14,8 @@ import java.util.Optional;
 
 @Service
 public class StatService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatService.class);
+
     @Resource
     final public GeneticFactorRepository geneticFactorRepository;
 
@@ -28,10 +32,17 @@ public class StatService {
 
         Stat stat;
         if (optionalStat.isPresent()) {
+            LOGGER.info("Retrieving stats");
+
             stat = optionalStat.get();
         } else {
+            LOGGER.info("Initializing stats");
+
             int mutantCount = geneticFactorRepository.findByMutant(true).size();
+            LOGGER.info(String.format("Retrieved mutant counts: %s", mutantCount));
+
             int humanCount = geneticFactorRepository.findByMutant(false).size();
+            LOGGER.info(String.format("Retrieved human counts: %s", humanCount));
 
             double ratio;
             if (mutantCount == 0 || humanCount == 0) ratio = 0;
@@ -42,6 +53,8 @@ public class StatService {
                     .count_human_dna(humanCount)
                     .ratio(ratio)
                     .build();
+
+            LOGGER.info(String.format("Storing new stat: %s", stat));
             statRepository.save(stat);
         }
 

@@ -1,9 +1,15 @@
 package com.magneto.scanner.lib.detector;
 
+import lombok.ToString;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
 public class Monitor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Monitor.class);
 
     private Map<String, Integer> factorFlags;
     private int humanFactorLimit;
@@ -33,7 +39,12 @@ public class Monitor {
     }
 
     public void recordFactor(int occurrences, String flagKey) {
-        if (!factorFlags.containsKey(flagKey)) return;
+        if (!factorFlags.containsKey(flagKey)) {
+            LOGGER.error(String.format("No valid factor: %s", flagKey));
+
+            return;
+        }
+
         if (occurrences != factorSize) return;
 
         int flagCounter = factorFlags.get(flagKey) + 1;
@@ -41,8 +52,11 @@ public class Monitor {
         factorFlags.put(flagKey, flagCounter);
     }
 
-    public boolean hashEnoughFactor() {
-        return accumulatedFactor() > humanFactorLimit;
+    public synchronized boolean hashEnoughFactor() {
+        boolean enough = accumulatedFactor() > humanFactorLimit;
+        if (enough) LOGGER.info(String.format("Has enough factor: %s", toString()));
+
+        return enough;
     }
 
     public int accumulatedFactor() {

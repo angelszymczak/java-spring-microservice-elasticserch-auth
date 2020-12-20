@@ -1,7 +1,12 @@
 package com.magneto.scanner.lib.detector;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MutantFactorDetector {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MutantFactorDetector.class);
+
     private Monitor monitor;
 
     public MutantFactorDetector() {
@@ -56,6 +61,8 @@ public class MutantFactorDetector {
             String currentFactor = String.valueOf(data[nextY].charAt(nextX));
             if (currentFactor.equals(prevFactor)) {
                 itemsOccurrences++;
+
+                LOGGER.info(String.format("Potential mutant: [factor: %s, occurrences: %s]", currentFactor, itemsOccurrences));
 
                 monitor.recordFactor(itemsOccurrences, currentFactor);
             } else {

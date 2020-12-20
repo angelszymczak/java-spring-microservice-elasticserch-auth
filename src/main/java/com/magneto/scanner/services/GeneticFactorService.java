@@ -3,6 +3,8 @@ package com.magneto.scanner.services;
 import com.magneto.scanner.lib.detector.MutantFactorDetector;
 import com.magneto.scanner.models.GeneticFactor;
 import com.magneto.scanner.repository.GeneticFactorRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.UUID;
 
 @Service
 public class GeneticFactorService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeneticFactorService.class);
+
     @Resource
     final private GeneticFactorRepository repository;
 
@@ -30,7 +34,15 @@ public class GeneticFactorService {
     public GeneticFactor findOrCreate(String[] dna) {
         Optional<GeneticFactor> geneticFactor = findByDna(dna);
 
-        return (geneticFactor.isPresent()) ? geneticFactor.get() : create(dna);
+        if (geneticFactor.isPresent()) {
+            LOGGER.info("Retrieving DNA record");
+
+            return geneticFactor.get();
+        } else {
+            LOGGER.info("Creating new DNA record");
+
+            return create(dna);
+        }
     }
 
     private Optional<GeneticFactor> findByDna(String[] dna) {

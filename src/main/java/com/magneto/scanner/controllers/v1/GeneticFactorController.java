@@ -29,8 +29,17 @@ public class GeneticFactorController {
     @PostMapping(value = "/mutant", consumes = "application/vnd.magneto.v1+json")
     @PreAuthorize("hasRole('MODERATOR')")
     public ResponseEntity mutant(@RequestBody ScanRequest param) {
-        LOGGER.info("Request scan with" + param.toString());
+        LOGGER.info("Request scan with " + param);
+
+        if (!param.isValid()) {
+            LOGGER.info("Invalid param");
+
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         GeneticFactor geneticFactor = service.findOrCreate(param.getDna());
+
+        LOGGER.info(String.format("Result: %s", geneticFactor));
 
         if (geneticFactor.getMutant()) return ResponseEntity.status(HttpStatus.OK).build();
         else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
