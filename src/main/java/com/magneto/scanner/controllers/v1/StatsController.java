@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/v1", headers = "X-Accept-Version=v1")
 public class StatsController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GeneticFactorController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatsController.class);
 
     @Autowired
     private StatService statService;
@@ -28,7 +28,11 @@ public class StatsController {
     @GetMapping(value = "/stats", produces = "application/vnd.magneto.v1+json")
     @PreAuthorize("hasRole('MODERATOR')")
     public ResponseEntity<Stat> stats() {
+        LOGGER.info("Requesting stats");
+
         Stat stat = statService.getStat();
+
+        LOGGER.info(String.format("Stat: %s", stat));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
