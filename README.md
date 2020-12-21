@@ -1,4 +1,4 @@
-# Java Spring Boot Microservice Elasticsearch Redis Demo 
+# Java Spring Boot Microservice Elasticsearch Redis Demo [![MutantDetector](https://circleci.com/gh/angelszymczak/java-spring-microservice-elasticserch-auth.svg?style=svg&circle-token=5bed45cbd601b5d886945317626039b4328c8266)](https://circleci.com/gh/angelszymczak/java-spring-microservice-elasticserch-auth) 
 
 This repository contains a sample demo of very basic API REST **Mutant Detector** which receive genetic factors code and check if the DNA is mutant o no.
 
@@ -69,10 +69,7 @@ Currently, Spring Boot application and, the Elasticsearch and Redis databases en
 
 - You can prove it with any REST Client like [Insomnia](https://insomnia.rest/download/)
 
-  - Here you can find a pre configured [workspace](https://github.com/angelszymczak/java-spring-microservice-elasticserch-auth/blob/main/rest-client-insonmia-workspace.json)
+  - Here you can find a pre configured [workspace](rest-client-insonmia-workspace.json)
    
 
 ![](media/demo.gif)
-
-
-[![angelszymczak](https://circleci.com/gh/angelszymczak/java-spring-microservice-elasticserch-auth.svg?style=svg)](https://circleci.com/gh/angelszymczak/java-spring-microservice-elasticserch-auth)
